@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace api.DTOs.Account
 {
-    public class LoginDTO
+    public class RefreshTokenRequestDTO
     {
         [Required]
-        public string? email { get; set; }
-        [Required]
-        public string? password { get; set; }
+        public string refresh_token { get; set; }
     }
 }

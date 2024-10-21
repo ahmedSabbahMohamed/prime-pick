@@ -9,15 +9,14 @@ namespace api.DTOs.Account
     public class RegisterDTO
     {
         [Required]
-
-        public string? Username { get; set; }
+        public string? name { get; set; }
 
         [Required]
         [EmailAddress]
-        public string? Email { get; set; }
+        public string? email { get; set; }
 
         [Required]
-        public string? Password { get; set; }
-        public string? Phone { get; set; }
+        public string? password { get; set; }
+        public string? phone { get; set; }
     }
 }

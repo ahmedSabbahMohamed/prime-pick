@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using api.Interfaces;
 using api.Models;
@@ -21,12 +22,12 @@ namespace api.Services
             _key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(config["JWT:SigningKey"]));
         }
 
-        public string CreateToken(AppUser user)
+        public SecurityToken CreateToken(AppUser user)
         {
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.Name),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -37,7 +38,7 @@ namespace api.Services
             var tokenDiscriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(15),
+                Expires = DateTime.UtcNow.AddSeconds(60),
                 SigningCredentials = creds,
                 Issuer = _config["JWT:Issuer"],
                 Audience = _config["JWT:Audience"]
@@ -46,7 +47,20 @@ namespace api.Services
             var TokenHandler = new JwtSecurityTokenHandler();
             var Token = TokenHandler.CreateToken(tokenDiscriptor);
 
-            return TokenHandler.WriteToken(Token);
+            return Token;
+        }
+
+        public RefreshToken CreateRefreshToken()
+        {
+            var refreshToken = Guid.NewGuid().ToString();
+
+            return new RefreshToken
+            {
+                Token = refreshToken,
+                ExpiresOn = DateTime.UtcNow.AddMinutes(2),
+                CreatedOn = DateTime.UtcNow,
+                
+            };
         }
     }
 }

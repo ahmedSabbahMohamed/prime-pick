@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241019050159_RefreshTokens")]
+    partial class RefreshTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "664d7a74-d37f-4327-b777-b083e7c6f214",
+                            Id = "f5c5050c-c501-4249-bba3-159f46a5d862",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7333fd3a-501d-4ed5-bea1-aa64b895c694",
+                            Id = "0c97cdf1-9b5c-40dd-9923-327080191337",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -194,9 +197,6 @@ namespace api.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -307,7 +307,7 @@ namespace api.Migrations
                             b1.Property<DateTime>("ExpiresOn")
                                 .HasColumnType("datetime2");
 
-                            b1.Property<DateTime?>("RevokedOn")
+                            b1.Property<DateTime>("RevokedOn")
                                 .HasColumnType("datetime2");
 
                             b1.Property<string>("Token")

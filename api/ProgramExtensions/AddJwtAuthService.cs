@@ -11,7 +11,7 @@ namespace api.ProgramExtensions
     {
         public static void AddJwtAuthExt(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication(op =>{
+            services.AddAuthentication(op => {
                 op.DefaultAuthenticateScheme = 
                 op.DefaultChallengeScheme = 
                 op.DefaultForbidScheme = 
@@ -24,11 +24,15 @@ namespace api.ProgramExtensions
                 {
                     ValidateIssuer = true,
                     ValidIssuer = configuration["JWT:Issuer"],
-                    ValidateAudience = false,
+                    ValidateAudience = true,
+                    ValidAudience = configuration["JWT:Audience"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         System.Text.Encoding.UTF8.GetBytes(configuration["JWT:SigningKey"])
-                    ) 
+                    
+                    ),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
         }
