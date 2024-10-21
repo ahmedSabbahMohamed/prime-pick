@@ -1,13 +1,17 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { HEADER_NAV } from "../../utils/constants";
 
 function HeaderNav() {
-  const NavLink = ({ link, text, Icon }) => {
+  const NavLinkItem = ({ link, text, Icon }) => {
     return (
-      <li className="h-[42px] px-4 rounded-full border border-transparent active:bg-blue-800 active:border-white">
-        <Link
+      <li>
+        <NavLink
           to={link}
-          className="flex justify-center items-center gap-1 w-full h-full"
+          className={({ isActive }) =>
+            `flex gap-1 items-center h-[45px] px-2 rounded-full border ${
+              isActive ? "bg-blue-700" : "border-transparent"
+            }`
+          }
         >
           <span>
             <Icon size={"20px"} color={"white"} />
@@ -15,7 +19,7 @@ function HeaderNav() {
           <span className="text-white text-sm font-normal whitespace-nowrap">
             {text}
           </span>
-        </Link>
+        </NavLink>
       </li>
     );
   };
@@ -24,7 +28,12 @@ function HeaderNav() {
     <nav>
       <ul className="flex gap-2 overflow-x-auto shrink-0 grow-0 pb-3">
         {HEADER_NAV.map((item, index) => (
-          <NavLink key={index} link={item.link} text={item.text} Icon={item.icon} />
+          <NavLinkItem
+            key={index}
+            link={item.link}
+            text={item.text}
+            Icon={item.icon}
+          />
         ))}
       </ul>
     </nav>

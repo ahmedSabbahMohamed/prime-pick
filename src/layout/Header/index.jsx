@@ -3,7 +3,7 @@ import Logo from "../../components/ui/Logo";
 import AuthButtons from "../components/AuthButtons";
 import HeaderNav from "../components/HeaderNav";
 
-function MainHeader() {
+function Header() {
   return (
     <div className="bg-primary">
       <header className="container mx-auto min-h-[60px] px-2 py-5">
@@ -17,4 +17,4 @@ function MainHeader() {
   );
 }
 
-export default MainHeader;
+export default Header;

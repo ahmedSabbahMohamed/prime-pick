@@ -6,20 +6,20 @@ function AuthLayout({ children }) {
     <Layout>
       <Row>
         <Col
-          xs={{ span: 0, order: 2 }}
-          sm={{ span: 0, order: 2 }}
-          md={{ span: 11, order: 1 }}
-          lg={{ span: 12, order: 1 }}
-          className="bg-gray-50 flex items-center justify-center h-[calc(100vh-60px)]"
+          xs={{ span: 0 }}
+          sm={{ span: 0 }}
+          md={{ span: 11 }}
+          lg={{ span: 12 }}
+          className="bg-gray-50 flex items-center justify-center w-full"
         >
           <img src={booking} alt="Booking" />
         </Col>
         <Col
-          xs={{ span: 24, order: 1 }}
-          sm={{ span: 24, order: 1 }}
-          md={{ span: 13, order: 2 }}
-          lg={{ span: 12, order: 2 }}
-          className="h-[calc(100vh-60px)] bg-white"
+          xs={{ span: 24 }}
+          sm={{ span: 24 }}
+          md={{ span: 13 }}
+          lg={{ span: 12 }}
+          className="h-auto md:h-screen bg-white"
         >
           {children}
         </Col>

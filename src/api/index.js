@@ -5,11 +5,18 @@ const getToken = () => {
   return token ? `Bearer ${token}` : null;
 };
 
-const getHeaders = ({ hasAttachment = false }) => {
+const getHeaders = () => {
   const token = getToken();
-  return hasAttachment
-    ? { "Content-Type": "multipart/form-data", token }
-    : { "Content-Type": "application/json", token };
+  if (token) {
+    return {
+      Authorization: token,
+      "Content-Type": "multipart/form-data",
+    };
+  } else {
+    return {
+      "Content-Type": "multipart/form-data",
+    };
+  }
 };
 
 export const API = axios.create({

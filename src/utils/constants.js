@@ -6,7 +6,7 @@ import { LuPlaneTakeoff } from "react-icons/lu";
 
 export const HEADER_NAV = [
   {
-    link: "stays",
+    link: "/",
     text: "Stays",
     icon: MdOutlineBed,
   },

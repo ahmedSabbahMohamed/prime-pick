@@ -1,5 +1,5 @@
-import counterReducer from "./counterSlice";
+import userReducer from "../../auth/store/userSlice";
 
 export const reducers = {
-  counterReducer,
+  user: userReducer,
 };

@@ -1,18 +1,23 @@
-import {
-  LockOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { useState } from "react";
+import { usePhone } from "../../services";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input } from "antd";
-import React from "react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 function RegisterForm() {
+  const [countryCode, setCountryCode] = useState("us");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const { data } = usePhone();
+
+  data && setCountryCode(data?.data?.countryCode.toLowerCase());
+
   return (
     <>
       <Form.Item
         name="name"
-        label={"name"}
+        label={"User name"}
         rules={[
           {
             required: true,
@@ -26,7 +31,7 @@ function RegisterForm() {
       </Form.Item>
       <Form.Item
         name="email"
-        label={"email"}
+        label={"Email"}
         rules={[
           {
             required: true,
@@ -38,16 +43,20 @@ function RegisterForm() {
       >
         <Input
           prefix={<MailOutlined className="site-form-item-icon" />}
-          type="email"
+          type="Email"
           size="large"
         />
       </Form.Item>
       <Form.Item
         name="password"
-        label={"password"}
+        label={"Password"}
         rules={[
           {
             required: true,
+          },
+          {
+            min: 12,
+            message: "Password must be at least 12 characters",
           },
         ]}
       >
@@ -58,16 +67,19 @@ function RegisterForm() {
       </Form.Item>
       <Form.Item
         name="phone"
-        label={"phone"}
+        label={"Phone"}
         rules={[
           {
             required: true,
           },
         ]}
       >
-        <Input
-          prefix={<PhoneOutlined className="site-form-item-icon" />}
-          size="large"
+        <PhoneInput
+          country={countryCode}
+          value={phoneNumber}
+          onChange={(phone) => setPhoneNumber(phone)}
+          inputStyle={{ width: "100%" }}
+          countryCodeEditable={true}
         />
       </Form.Item>
     </>
