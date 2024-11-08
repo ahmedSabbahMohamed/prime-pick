@@ -9,7 +9,7 @@ function HeaderNav() {
           to={link}
           className={({ isActive }) =>
             ` text-sm flex gap-1 items-center h-[42px] px-2 rounded-full border ${
-              isActive ? "opacity-10" : "border-transparent"
+              isActive ? "bg-blue-700" : "border-transparent"
             }`
           }
         >
