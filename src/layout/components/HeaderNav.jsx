@@ -8,8 +8,8 @@ function HeaderNav() {
         <NavLink
           to={link}
           className={({ isActive }) =>
-            `flex gap-1 items-center h-[45px] px-2 rounded-full border ${
-              isActive ? "bg-blue-700" : "border-transparent"
+            ` text-sm flex gap-1 items-center h-[42px] px-2 rounded-full border ${
+              isActive ? "opacity-10" : "border-transparent"
             }`
           }
         >
@@ -25,8 +25,8 @@ function HeaderNav() {
   };
 
   return (
-    <nav>
-      <ul className="flex gap-2 overflow-x-auto shrink-0 grow-0 pb-3">
+    <nav className="h-[45px]">
+      <ul className="flex gap-2 overflow-x-auto shrink-0 grow-0">
         {HEADER_NAV.map((item, index) => (
           <NavLinkItem
             key={index}

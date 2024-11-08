@@ -6,8 +6,8 @@ import HeaderNav from "../components/HeaderNav";
 function Header() {
   return (
     <div className="bg-primary">
-      <header className="container mx-auto min-h-[60px] px-2 py-5">
-        <div className="flex flex-row justify-between items-center mb-8">
+      <header className="container mx-auto px-2 md:px-0">
+        <div className="flex items-center justify-between h-[60px]">
           <Logo />
           <AuthButtons />
         </div>
