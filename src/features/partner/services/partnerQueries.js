@@ -1,6 +1,5 @@
-import { useGlobalQuery } from "../../hooks/useGlobalQuery";
-import { useAuthMutation } from "../hooks/useAuthMutation";
-import * as SERVICES from "./authServices";
+import * as SERVICES from "./partnerServices";
+import { useAuthMutation } from "../../../hooks/useAuthMutation";
 
 export const useRegister = () => {
   return useAuthMutation({
@@ -13,12 +12,5 @@ export const useLogin = () => {
   return useAuthMutation({
     serviceFn: SERVICES.login,
     onSuccessMsg: "loggedin successfully",
-  });
-};
-
-export const usePhone = () => {
-  return useGlobalQuery({
-    queryKey: ["phone"],
-    queryFn: SERVICES.phone,
   });
 };

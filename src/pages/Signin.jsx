@@ -1,9 +1,9 @@
 import React from "react";
 import Loading from "../components/ui/Loading";
 import { Button, Form } from "antd";
-import SigninForm from "../auth/components/form/SigninForm";
-import AuthModule from "../auth/components/ui/AuthModule";
-import { useLogin } from "../auth/services";
+import SigninForm from "../features/auth/components/form/SigninForm";
+import AuthModule from "../features/auth/components/ui/AuthModule";
+import { useLogin } from "../features/auth/services";
 import convertToFormData from "../utils/convertToFormData";
 
 function Signin() {

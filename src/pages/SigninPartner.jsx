@@ -1,18 +1,19 @@
-import { Button, Form } from "antd";
-import Loading from "../components/ui/Loading";
-import RegisterForm from "../features/auth/components/form/RegisterForm";
-import AuthModule from "../features/auth/components/ui/AuthModule";
-import { useRegister } from "../features/auth/services/authQueries";
+import { Form } from "antd";
+import { useLogin } from "../features/partner/services/partnerQueries";
 import convertToFormData from "../utils/convertToFormData";
+import Loading from "../components/ui/Loading";
+import { Button } from "antd";
+import AuthModule from "../features/auth/components/ui/AuthModule";
+import SigninForm from "../features/auth/components/form/SigninForm";
 
-function Register() {
-  const { mutateAsync, isPending } = useRegister();
-  const [form] = Form.useForm(); 
+function SigninPartner() {
+  const { mutateAsync, isPending } = useLogin();
+  const [form] = Form.useForm();
 
   const onFinish = async (values) => {
     const formData = convertToFormData(values);
-      await mutateAsync(formData);
-      form.resetFields();
+    await mutateAsync(formData);
+    form.resetFields();
   };
 
   const FormContainer = () => (
@@ -20,11 +21,11 @@ function Register() {
       <Form
         form={form}
         layout="vertical"
-        name="normal_register"
-        className="register-form"
+        name="normal_login"
+        className="login-form"
         onFinish={onFinish}
       >
-        <RegisterForm />
+        <SigninForm />
         <Form.Item>
           <Button
             type="primary"
@@ -33,7 +34,7 @@ function Register() {
             loading={isPending}
             size="large"
           >
-            {"Register"}
+            {"Sign in"}
           </Button>
         </Form.Item>
       </Form>
@@ -41,10 +42,10 @@ function Register() {
   );
 
   return (
-    <AuthModule AUTH_TITLE={"Register"}>
+    <AuthModule AUTH_TITLE={"Sign in"}>
       <FormContainer />
     </AuthModule>
   );
 }
 
-export default Register;
+export default SigninPartner;

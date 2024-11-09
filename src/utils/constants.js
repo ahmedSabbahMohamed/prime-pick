@@ -31,3 +31,18 @@ export const HEADER_NAV = [
     icon: BsTaxiFrontFill,
   },
 ];
+
+export const REGISTER_FOR_FREE = [
+  {
+    id: 1,
+    text: "45% of hosts get their first booking within a week",
+  },
+  {
+    id: 2,
+    text: "Choose between instant bookings and booking requests",
+  },
+  {
+    id: 3,
+    text: "We handle payments for you",
+  },
+];

@@ -1,4 +1,3 @@
-import React from "react";
 import Logo from "../../components/ui/Logo";
 import AuthButtons from "../components/AuthButtons";
 import HeaderNav from "../components/HeaderNav";

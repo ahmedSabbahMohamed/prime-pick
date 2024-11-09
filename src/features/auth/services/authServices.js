@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API } from "../../api";
+import { API } from "../../../api";
 import { AUTH_ENDPOINTS } from "./authEndpoints";
 
 export const register = (data) => {

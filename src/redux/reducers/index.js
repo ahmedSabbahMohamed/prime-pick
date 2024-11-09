@@ -1,4 +1,4 @@
-import userReducer from "../../auth/store/userSlice";
+import userReducer from "../../features/auth/store/userSlice";
 
 export const reducers = {
   user: userReducer,

@@ -1,20 +1,19 @@
 import { Button, Form } from "antd";
 import Loading from "../components/ui/Loading";
-import RegisterForm from "../features/auth/components/form/RegisterForm";
-import AuthModule from "../features/auth/components/ui/AuthModule";
-import { useRegister } from "../features/auth/services/authQueries";
+import { useRegister } from "../features/partner/services/partnerQueries";
 import convertToFormData from "../utils/convertToFormData";
+import RegisterForm from "../features/partner/components/form/RegisterForm";
+import AuthModule from "../features/auth/components/ui/AuthModule";
 
-function Register() {
+function RegisterPartner() {
   const { mutateAsync, isPending } = useRegister();
-  const [form] = Form.useForm(); 
+  const [form] = Form.useForm();
 
   const onFinish = async (values) => {
     const formData = convertToFormData(values);
-      await mutateAsync(formData);
-      form.resetFields();
+    await mutateAsync(formData);
+    form.resetFields();
   };
-
   const FormContainer = () => (
     <Loading isLoading={isPending}>
       <Form
@@ -41,10 +40,10 @@ function Register() {
   );
 
   return (
-    <AuthModule AUTH_TITLE={"Register"}>
+    <AuthModule AUTH_TITLE="Register As Partner">
       <FormContainer />
     </AuthModule>
   );
 }
 
-export default Register;
+export default RegisterPartner;

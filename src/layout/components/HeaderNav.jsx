@@ -8,9 +8,9 @@ function HeaderNav() {
         <NavLink
           to={link}
           className={({ isActive }) =>
-            ` text-sm flex gap-1 items-center h-[42px] px-2 rounded-full border ${
-              isActive ? "bg-blue-700" : "border-transparent"
-            }`
+            ` text-sm flex gap-1 items-center h-[42px] px-2 rounded-full border transition-all duration-500 ${
+              isActive ? "bg-blue-700 opacity-80" : "border-transparent"
+            } hover:opacity-85 hover:bg-blue-700`
           }
         >
           <span>

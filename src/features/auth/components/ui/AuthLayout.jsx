@@ -1,5 +1,5 @@
 import { Col, Layout, Row } from "antd";
-import booking from "../../../assets/images/booking.svg";
+import booking from "../../../../assets/images/booking.svg";
 
 function AuthLayout({ children }) {
   return (

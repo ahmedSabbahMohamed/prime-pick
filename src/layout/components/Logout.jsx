@@ -1,7 +1,7 @@
 import { LogoutOutlined } from "@ant-design/icons";
 import { Button, Tooltip } from "antd";
 import { useDispatch } from "react-redux";
-import { handleLogout } from "../../auth/store/userSlice";
+import { handleLogout } from "../../features/auth/store/userSlice";
 
 
 function Logout() {
