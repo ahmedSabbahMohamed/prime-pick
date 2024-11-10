@@ -9,6 +9,7 @@ using api.DTOs.Account;
 using api.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
+using api.DTOs.Account.Owner;
 
 namespace api.Controllers
 {
@@ -57,6 +58,7 @@ namespace api.Controllers
             }
         }
 
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromForm] LoginDTO login)
         {
@@ -87,10 +89,72 @@ namespace api.Controllers
         }
 
 
+        [HttpPost("owner-register")]
+        public async Task<IActionResult> OwnerRegister([FromForm] OwnerRegisterDTO OwnerRegisterDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.OwnerRegisterAsync(OwnerRegisterDTO);
+
+            if (result.is_authenticated)
+            {
+                return Ok(new {
+                    status = "Success",
+                    data = new {
+                        name = result.name,
+                        email = result.email,
+                        roles = result.role,
+                        access_token = result.token,
+                        refresh_token = result.refresh_token,
+                        refresh_token_expiration = result.refresh_token_expiration
+                    }
+                });
+            }
+            else
+            {
+                return BadRequest(new {
+                    status = "Error",
+                    message = result.message
+                });
+            }
+        }
+
+
+        [HttpPost("owner-login")]
+        public async Task<IActionResult> OwnerLogin([FromForm] LoginDTO login)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.OwnerLoginAsync(login);
+
+            if(!result.is_authenticated)
+            {
+                return BadRequest(new {
+                    status = "Error",
+                    message = result.message
+                });
+            }
+
+            return Ok(new {
+                status = "Success",
+                data = new {
+                    name = result.name,
+                    email = result.email,
+                    roles = result.role,
+                    access_token = result.token,
+                    refresh_token = result.refresh_token,
+                    refresh_token_expiration = result.refresh_token_expiration
+                }
+            });
+        }
+
+
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDTO refreshTokenRequestDTO)
         {
-            var result = await _authService.RefreshTokenAsync(refreshTokenRequestDTO.refresh_token);
+            var result = await _authService.RefreshTokenAsync(refreshTokenRequestDTO);
 
             if(!result.is_authenticated)
             {
@@ -109,18 +173,26 @@ namespace api.Controllers
             });
         }
 
+
+
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> HelloWorld()
+        public IActionResult HelloWorld()
         {
             return Ok("Hello World!");
         }
 
-        [HttpGet("2")]
-        public async Task<IActionResult> HelloWorld2()
+        [HttpGet("no-auth")]
+        public IActionResult HelloWorld2()
         {
             return Ok("Hello World2!");
         }
 
+        [Authorize(Roles = "Owner")]
+        [HttpGet("owner-test")]
+        public IActionResult HelloWorld3()
+        {
+            return Ok("Hello World for owner!");
+        }
     }
 }

@@ -4,6 +4,8 @@ using api.ProgramExtensions;
 using api.Interfaces;
 using api.Services;
 using Microsoft.OpenApi.Models;
+using api.Helpers;
+using api.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,9 @@ builder.Services.AddDbContext<AppDbContext>(op => {
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IOwnerManager, OwnerManager>();
+builder.Services.AddScoped<AuthenticationHelpers>();
+
 
 builder.Services.AddIdentityExt();
 builder.Services.AddJwtAuthExt(builder.Configuration);

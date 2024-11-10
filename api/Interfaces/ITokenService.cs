@@ -9,7 +9,8 @@ namespace api.Interfaces
 {
     public interface ITokenService
     {
-        SecurityToken CreateToken(AppUser user);
+        Task<SecurityToken> CreateToken(AppUser user);
+        SecurityToken CreateToken(Owner owner);
         RefreshToken CreateRefreshToken();
     }
 }

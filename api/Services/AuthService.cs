@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Account;
+using api.DTOs.Account.Owner;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;
@@ -15,13 +16,32 @@ namespace api.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IOwnerManager _ownerManager;
         private readonly ITokenService _tokenService;
+        private readonly AuthenticationHelpers _authHelper;
 
-        public AuthService(UserManager<AppUser> userManager, ITokenService tokenService)
+        public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, AuthenticationHelpers authHelper, IOwnerManager ownerManager)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _authHelper = authHelper;
+            _ownerManager = ownerManager;
         }
+
+
+        public async Task<AuthDTO> RegisterAsync(RegisterDTO register)
+        {
+            AppUser user = await _userManager.FindByEmailAsync(register.email);
+
+            if(user != null)
+            {
+                return await _authHelper.HandleExistingUserRegistrationAsync(user, "User");
+            }
+
+            return await _authHelper.RegisterNewUserAsync(register);
+        }
+
+
 
         public async Task<AuthDTO> LoginAsync(LoginDTO login)
         {
@@ -34,7 +54,7 @@ namespace api.Services
                 return new AuthDTO { message = "Username or password is invalid!"};
             }
 
-            var token = _tokenService.CreateToken(user);
+            var token = await _tokenService.CreateToken(user);
 
             var refreshToken = user.RefreshTokens.FirstOrDefault(t => t.IsActive);
 
@@ -62,101 +82,86 @@ namespace api.Services
             return authModel;
         }
 
-        public async Task<AuthDTO> RegisterAsync(RegisterDTO register)
+
+
+        public async Task<AuthDTO> AdminRegisterAsync(RegisterDTO registerDTO)
         {
-            if(await _userManager.FindByEmailAsync(register.email) != null)
-                return new AuthDTO { message = "Email is Already Registered!" };
+            AppUser user = await _userManager.FindByEmailAsync(registerDTO.email);
 
-            AppUser newUser = new AppUser
+            if(user != null)
             {
-                UserName = register.email,
-                Name = register.name,
-                Email = register.email,
-                PhoneNumber = register.phone
-            };
-
-            var Result = await _userManager.CreateAsync(newUser, register.password);
-
-            if(!Result.Succeeded)
-            {
-                string errors = string.Empty;
-
-                foreach(var error in Result.Errors)
-                {
-                    errors += $"{error.Description.Substring(0, error.Description.Length - 1)}, ";
-                }
-
-                return new AuthDTO { message = $"{errors.Substring(0, errors.Length - 2)}" };
+                return await _authHelper.HandleExistingUserRegistrationAsync(user, "Admin");
             }
 
-            var addedToRole = await _userManager.AddToRoleAsync(newUser, "User");
-
-            if(!addedToRole.Succeeded)
-            {
-                string errors = string.Empty;
-
-                foreach(var error in Result.Errors)
-                {
-                    errors += $"{error.Description.Substring(0, error.Description.Length - 1)}, ";
-                }
-
-                return new AuthDTO { message = $"{errors.Substring(0, errors.Length - 2)}" };
-            }
-
-
-            var token = _tokenService.CreateToken(newUser);
-            var refreshToken = _tokenService.CreateRefreshToken();
-            newUser.RefreshTokens.Add(refreshToken);
-            await _userManager.UpdateAsync(newUser);
-
-            return new AuthDTO 
-            {
-                name = newUser.Name,
-                email = newUser.Email,
-                is_authenticated = true,
-                roles = new List<string> { "User" },
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                refresh_token = refreshToken.Token,
-                refresh_token_expiration = refreshToken.ExpiresOn
-            };
+            return await _authHelper.RegisterNewAdminAsync(registerDTO);
         }
 
 
-        public async Task<AuthDTO> RefreshTokenAsync(string token)
+        public async Task<AuthDTO> RefreshTokenAsync(RefreshTokenRequestDTO refreshTokenRequestDTO)
         {
-            var authModel = new AuthDTO();
-
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
-
-            if(user == null)
+            switch(refreshTokenRequestDTO.role)
             {
-                authModel.message = "Invalid Token";
-                return authModel;
+                case "User":
+                    return await _authHelper.UserRefreshToken(refreshTokenRequestDTO.refresh_token);
+                default:
+                    return await _authHelper.OwnerRefreshToken(refreshTokenRequestDTO.refresh_token);
+            }
+        }
+
+
+        
+        
+
+
+        public async Task<OwnerAuthDTO> OwnerRegisterAsync(OwnerRegisterDTO ownerRegisterDTO)
+        {
+            Owner Owner = await _ownerManager.FindByEmailAsync(ownerRegisterDTO.email);
+
+            if(Owner == null)
+            {
+                return await _authHelper.RegisterNewOwnerAsync(ownerRegisterDTO);
             }
 
-            var refreshToken = user.RefreshTokens.Single(t => t.Token == token);
+            return new OwnerAuthDTO { message = "Email Already Registered!"};
+        }
 
-            if(!refreshToken.IsActive)
+
+        public async Task<OwnerAuthDTO> OwnerLoginAsync(LoginDTO login)
+        {
+            OwnerAuthDTO authModel = new OwnerAuthDTO();
+
+            Owner? owner = await _ownerManager.FindByEmailAsync(login.email);
+
+            if(owner is null || ! _ownerManager.CheckPassword(owner, login.password))
             {
-                authModel.message = "Inactive Token";
-                return authModel;
+                return new OwnerAuthDTO { message = "Username or password is invalid!"};
             }
 
-            refreshToken.RevokedOn = DateTime.UtcNow;
+            var token = _tokenService.CreateToken(owner);
 
-            RefreshToken newRefreshToken = _tokenService.CreateRefreshToken();
-            user.RefreshTokens.Add(newRefreshToken);
-            await _userManager.UpdateAsync(user);
+            var refreshToken = owner.RefreshTokens.FirstOrDefault(t => t.IsActive);
 
-            var JwtToken = _tokenService.CreateToken(user);
+            if(refreshToken != null)
+            {
+                authModel.refresh_token = refreshToken.Token;
+                authModel.refresh_token_expiration = refreshToken.ExpiresOn;
+            }
+            else
+            {
+                var NewRefreshToken = _tokenService.CreateRefreshToken();
+                authModel.refresh_token = NewRefreshToken.Token;
+                authModel.refresh_token_expiration = NewRefreshToken.ExpiresOn;
+                owner.RefreshTokens.Add(NewRefreshToken);
+                await _ownerManager.UpdateAsync(owner);
+            }
+
+            authModel.name = owner.Name;
+            authModel.email = owner.Email;
             authModel.is_authenticated = true;
-            authModel.token = new JwtSecurityTokenHandler().WriteToken(JwtToken);
-            authModel.refresh_token = newRefreshToken.Token;
-            authModel.refresh_token_expiration = newRefreshToken.ExpiresOn;
+            authModel.role = "Owner";
+            authModel.token = new JwtSecurityTokenHandler().WriteToken(token);
 
             return authModel;
         }
-
-
     }
 }

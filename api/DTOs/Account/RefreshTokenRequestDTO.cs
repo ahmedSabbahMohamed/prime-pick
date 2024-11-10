@@ -10,5 +10,7 @@ namespace api.DTOs.Account
     {
         [Required]
         public string refresh_token { get; set; }
+        [Required]
+        public string role { get; set; }
     }
 }

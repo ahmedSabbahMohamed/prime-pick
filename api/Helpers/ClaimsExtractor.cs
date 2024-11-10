@@ -1,31 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace api.Helpers
 {
-    public class ClaimsExtractor
+    public static class ClaimsExtensions
     {
-        public static string? ExtractEmailFromToken(string refreshToken)
+        public static string GetUsername(this ClaimsPrincipal user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            return user.Claims.SingleOrDefault(x => x.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")).Value;
+        }
 
-            if (tokenHandler.CanReadToken(refreshToken))
-            {
-                var jwtToken = tokenHandler.ReadJwtToken(refreshToken); 
-                
-                var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-
-                if (emailClaim != null)
-                {
-                    return emailClaim.Value;
-                }
-            }
-            
-            return null; 
+        public static string GetEmail(this ClaimsPrincipal user)
+        {
+            return user.Claims.SingleOrDefault(x => x.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")).Value;
         }
     }
 }

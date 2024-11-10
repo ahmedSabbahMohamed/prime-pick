@@ -16,6 +16,10 @@ namespace api.Data
             
         }
 
+
+        public DbSet<Owner> Owners { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -30,7 +34,7 @@ namespace api.Data
                 new IdentityRole {
                     Name = "User",
                     NormalizedName = "USER"
-                }
+                },
             };
             builder.Entity<IdentityRole>().HasData(roles);
         }
